@@ -14,6 +14,9 @@ builder.Services.AddScoped<IShiftAccess, ShiftAccess>();
 builder.Services.AddScoped<IEmployeeAccess, EmployeeAccess>();
 builder.Services.AddScoped<IEmployeeLogic, EmployeeLogic>();
 builder.Services.AddScoped<IShiftLogic, ShiftLogic>();
+builder.Services.AddScoped<ILoginLogic, LoginLogic>();
+// Registrer også ILoginAccess og dens implementering, hvis relevant
+builder.Services.AddScoped<ILoginAccess, LoginAccess>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
