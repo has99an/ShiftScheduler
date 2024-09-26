@@ -87,7 +87,7 @@ namespace ShiftSchedulerAPI.DataAccess
 
             try
             {
-                string insertString = "INSERT INTO Employees (FirstName, LastName, ZipCode, StreetName, HouseNo, Mail, PhoneNumber) OUTPUT INSERTED.EmployeeID VALUES (@FirstName, @LastName, @ZipCode, @StreetName, @HouseNo, @Mail, @PhoneNumber)";
+                string insertString = "INSERT INTO Employees (FirstName, LastName, ZipCode, StreetName, HouseNo, Mail, PhoneNumber, EmployeeType) OUTPUT INSERTED.EmployeeID VALUES (@FirstName, @LastName, @ZipCode, @StreetName, @HouseNo, @Mail, @PhoneNumber, @EmployeeType)";
 
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 using (SqlCommand createCommand = new SqlCommand(insertString, con))
@@ -99,6 +99,7 @@ namespace ShiftSchedulerAPI.DataAccess
                     createCommand.Parameters.AddWithValue("@HouseNo", employee.HouseNo);
                     createCommand.Parameters.AddWithValue("@Mail", employee.Mail);
                     createCommand.Parameters.AddWithValue("@PhoneNumber", employee.PhoneNumber);
+                    createCommand.Parameters.AddWithValue("@EmployeeType", employee.EmployeeType);
 
                     con.Open();
                     insertedId = (int)createCommand.ExecuteScalar();
@@ -117,7 +118,7 @@ namespace ShiftSchedulerAPI.DataAccess
         {
             try
             {
-                string updateString = "UPDATE Employees SET FirstName = @FirstName, LastName = @LastName, ZipCode = @ZipCode, StreetName = @StreetName, HouseNo = @HouseNo, Mail = @Mail, PhoneNumber = @PhoneNumber WHERE EmployeeID = @EmployeeID";
+                string updateString = "UPDATE Employees SET FirstName = @FirstName, LastName = @LastName, ZipCode = @ZipCode, StreetName = @StreetName, HouseNo = @HouseNo, Mail = @Mail, PhoneNumber = @PhoneNumber, EmployeeType = @EmployeeType WHERE EmployeeID = @EmployeeID";
 
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 using (SqlCommand updateCommand = new SqlCommand(updateString, con))
@@ -129,6 +130,7 @@ namespace ShiftSchedulerAPI.DataAccess
                     updateCommand.Parameters.AddWithValue("@HouseNo", employee.HouseNo);
                     updateCommand.Parameters.AddWithValue("@Mail", employee.Mail);
                     updateCommand.Parameters.AddWithValue("@PhoneNumber", employee.PhoneNumber);
+                    updateCommand.Parameters.AddWithValue("@EmployeeType", employee.EmployeeType);
                     updateCommand.Parameters.AddWithValue("@EmployeeID", employee.EmployeeID);
 
                     con.Open();
@@ -174,6 +176,12 @@ namespace ShiftSchedulerAPI.DataAccess
             string mail = employeeReader.GetString(employeeReader.GetOrdinal("mail"));
             string phoneNumber = employeeReader.GetString(employeeReader.GetOrdinal("phoneNumber"));
 
+            // Use TryParse for safe conversion
+            if (!Enum.TryParse(employeeReader.GetString(employeeReader.GetOrdinal("employeeType")), out EmployeeType employeeType))
+            {
+                throw new InvalidOperationException("Invalid employee type value");
+            }
+
             return new Employee
             {
                 EmployeeID = employeeId,
@@ -183,7 +191,8 @@ namespace ShiftSchedulerAPI.DataAccess
                 StreetName = streetName,
                 HouseNo = houseNo,
                 Mail = mail,
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                EmployeeType = employeeType
             };
         }
     }

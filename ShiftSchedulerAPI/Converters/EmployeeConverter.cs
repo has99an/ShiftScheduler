@@ -18,7 +18,8 @@ namespace ShiftSchedulerAPI.Converters
                 PhoneNumber = employee.PhoneNumber,
                 StreetName = employee.StreetName,
                 ZipCode = employee.ZipCode,
-                HouseNo = employee.HouseNo
+                HouseNo = employee.HouseNo,
+                EmployeeType = employee.EmployeeType
             };
         }
 
@@ -33,7 +34,8 @@ namespace ShiftSchedulerAPI.Converters
                 PhoneNumber = employeeDto.PhoneNumber,
                 StreetName = employeeDto.StreetName,
                 ZipCode = employeeDto.ZipCode,
-                HouseNo = employeeDto.HouseNo
+                HouseNo = employeeDto.HouseNo,
+                EmployeeType = employeeDto.EmployeeType
             };
         }
 
