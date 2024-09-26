@@ -1,5 +1,6 @@
-﻿using ShiftSchedulerAPI.Models;
-using ShiftSchedulerAPI.DTO;
+﻿using ShiftSchedulerAPI.DTO;
+using ShiftSchedulerAPI.Models;
+using System.Collections.Generic;
 
 namespace ShiftSchedulerAPI.Converters
 {
@@ -9,11 +10,13 @@ namespace ShiftSchedulerAPI.Converters
         {
             return new ShiftDTO
             {
-                ID = shift.ID,
+                ShiftID = shift.ShiftID,
                 EmployeeID = shift.EmployeeID,
                 StartTime = shift.StartTime,
                 EndTime = shift.EndTime,
-                Type = shift.Type
+                Date = shift.Date,
+                Type = shift.Type,
+                Status = shift.Status
             };
         }
 
@@ -21,12 +24,34 @@ namespace ShiftSchedulerAPI.Converters
         {
             return new Shift
             {
-                ID = shiftDto.ID,
+                ShiftID = shiftDto.ShiftID,
                 EmployeeID = shiftDto.EmployeeID,
                 StartTime = shiftDto.StartTime,
                 EndTime = shiftDto.EndTime,
-                Type = shiftDto.Type
+                Date = shiftDto.Date,
+                Type = shiftDto.Type,
+                Status = shiftDto.Status
             };
+        }
+
+        public static List<ShiftDTO> ToDTOCollection(List<Shift> shifts)
+        {
+            var shiftDtos = new List<ShiftDTO>();
+            foreach (var shift in shifts)
+            {
+                shiftDtos.Add(ToDTO(shift));
+            }
+            return shiftDtos;
+        }
+
+        public static List<Shift> ToModelCollection(List<ShiftDTO> shiftDtos)
+        {
+            var shifts = new List<Shift>();
+            foreach (var shiftDto in shiftDtos)
+            {
+                shifts.Add(ToModel(shiftDto));
+            }
+            return shifts;
         }
     }
 }

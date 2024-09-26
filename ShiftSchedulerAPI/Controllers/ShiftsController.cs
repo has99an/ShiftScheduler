@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ShiftSchedulerAPI.DataAccess;
-using ShiftSchedulerAPI.Models;
-using System.Collections.Generic;
+using ShiftSchedulerAPI.BusinessLogicLayer;
+using ShiftSchedulerAPI.DTO;
+
 
 namespace ShiftSchedulerAPI.Controllers
 {
@@ -9,47 +9,55 @@ namespace ShiftSchedulerAPI.Controllers
     [Route("api/[controller]")]
     public class ShiftsController : ControllerBase
     {
-        private readonly IShiftAccess _shiftAccess;
+        private readonly IShiftLogic _shiftLogic;
 
-        public ShiftsController(IShiftAccess shiftAccess)
+        public ShiftsController(IShiftLogic shiftLogic)
         {
-            _shiftAccess = shiftAccess;
+            _shiftLogic = shiftLogic;
         }
 
         [HttpGet]
-        public ActionResult<List<Shift>> Get()
+        public async Task<ActionResult<List<ShiftDTO>>> Get()
         {
-            return _shiftAccess.GetAllShifts();
+            var shifts = await _shiftLogic.GetAllShifts();
+            return Ok(shifts);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Shift> Get(int id)
+        public async Task<ActionResult<ShiftDTO>> Get(int id)
         {
-            var shift = _shiftAccess.GetShiftById(id);
+            var shift = await _shiftLogic.GetShiftById(id);
             if (shift == null)
             {
                 return NotFound();
             }
-            return shift;
+            return Ok(shift);
         }
 
         [HttpPost]
-        public ActionResult<int> Post([FromBody] Shift shift)
+        public async Task<ActionResult<int>> Post([FromBody] ShiftDTO shiftDto)
         {
-            return _shiftAccess.AddShift(shift);
+            int newShiftId = await _shiftLogic.AddShift(shiftDto);
+            return CreatedAtAction(nameof(Get), new { id = newShiftId }, newShiftId);
         }
 
-        [HttpPut]
-        public IActionResult Put([FromBody] Shift shift)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateShift(int id, [FromBody] ShiftDTO shiftDto)
         {
-            _shiftAccess.UpdateShift(shift);
+            if (id != shiftDto.ShiftID)
+            {
+                return BadRequest();
+            }
+
+            await _shiftLogic.UpdateShift(shiftDto);
             return NoContent();
         }
 
+
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _shiftAccess.DeleteShift(id);
+            await _shiftLogic.RemoveShift(id);
             return NoContent();
         }
     }

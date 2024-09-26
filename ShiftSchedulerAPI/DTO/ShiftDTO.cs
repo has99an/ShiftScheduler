@@ -4,10 +4,13 @@ namespace ShiftSchedulerAPI.DTO
 {
     public class ShiftDTO
     {
-        public int ID { get; set; }
-        public string EmployeeID { get; set; } // Kan være null for åbne vagter
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public int ShiftID { get; set; }
+        public int? EmployeeID { get; set; } 
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
+        public DateOnly Date {  get; set; }
         public ShiftType Type { get; set; }
+        public ShiftStatus Status { get; set; }
+
     }
 }

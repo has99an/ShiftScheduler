@@ -13,6 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IShiftAccess, ShiftAccess>();
 builder.Services.AddScoped<IEmployeeAccess, EmployeeAccess>();
 builder.Services.AddScoped<IEmployeeLogic, EmployeeLogic>();
+builder.Services.AddScoped<IShiftLogic, ShiftLogic>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

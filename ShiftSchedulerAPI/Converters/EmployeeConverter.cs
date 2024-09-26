@@ -1,7 +1,6 @@
 ﻿using ShiftSchedulerAPI.Models;
 using ShiftSchedulerAPI.DTO;
-using System.Collections.Generic;
-using System.Linq;
+
 
 namespace ShiftSchedulerAPI.Converters
 {
