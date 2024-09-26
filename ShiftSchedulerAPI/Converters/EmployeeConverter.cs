@@ -1,5 +1,7 @@
 ﻿using ShiftSchedulerAPI.Models;
 using ShiftSchedulerAPI.DTO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ShiftSchedulerAPI.Converters
 {
@@ -12,11 +14,11 @@ namespace ShiftSchedulerAPI.Converters
                 EmployeeID = employee.EmployeeID,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
-                ZipCode = employee.ZipCode,
-                StreetName = employee.StreetName,
-                HouseNo = employee.HouseNo,
                 Mail = employee.Mail,
-                PhoneNumber = employee.PhoneNumber
+                PhoneNumber = employee.PhoneNumber,
+                StreetName = employee.StreetName,
+                ZipCode = employee.ZipCode,
+                HouseNo = employee.HouseNo
             };
         }
 
@@ -27,12 +29,17 @@ namespace ShiftSchedulerAPI.Converters
                 EmployeeID = employeeDto.EmployeeID,
                 FirstName = employeeDto.FirstName,
                 LastName = employeeDto.LastName,
-                ZipCode = employeeDto.ZipCode,
-                StreetName = employeeDto.StreetName,
-                HouseNo = employeeDto.HouseNo,
                 Mail = employeeDto.Mail,
-                PhoneNumber = employeeDto.PhoneNumber
+                PhoneNumber = employeeDto.PhoneNumber,
+                StreetName = employeeDto.StreetName,
+                ZipCode = employeeDto.ZipCode,
+                HouseNo = employeeDto.HouseNo
             };
+        }
+
+        public static List<EmployeeDTO> ToDTOCollection(List<Employee> employees)
+        {
+            return employees.Select(e => ToDTO(e)).ToList();
         }
     }
 }

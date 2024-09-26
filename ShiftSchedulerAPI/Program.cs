@@ -12,8 +12,7 @@ builder.Services.AddSwaggerGen();
 // Registrer dine dataadgangs tjenester her
 builder.Services.AddScoped<IShiftAccess, ShiftAccess>();
 builder.Services.AddScoped<IEmployeeAccess, EmployeeAccess>();
-builder.Services.AddScoped<EmployeeLogic>();
-
+builder.Services.AddScoped<IEmployeeLogic, EmployeeLogic>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

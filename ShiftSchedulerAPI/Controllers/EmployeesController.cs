@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShiftSchedulerAPI.Models;
+using ShiftSchedulerAPI.DTO;  
 using ShiftSchedulerAPI.BusinessLogicLayer;
+using System.Threading.Tasks;
 
 namespace ShiftSchedulerAPI.Controllers
 {
@@ -8,9 +10,9 @@ namespace ShiftSchedulerAPI.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly EmployeeLogic _employeeLogic;
+        private readonly IEmployeeLogic _employeeLogic; 
 
-        public EmployeeController(EmployeeLogic employeeLogic)
+        public EmployeeController(IEmployeeLogic employeeLogic) 
         {
             _employeeLogic = employeeLogic;
         }
@@ -34,14 +36,14 @@ namespace ShiftSchedulerAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddEmployee([FromBody] Employee employee)
+        public async Task<IActionResult> AddEmployee([FromBody] EmployeeDTO employee) 
         {
             var insertedId = await _employeeLogic.AddEmployee(employee);
             return CreatedAtAction(nameof(GetEmployeeById), new { id = insertedId }, employee);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] Employee employee)
+        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] EmployeeDTO employee)
         {
             if (id != employee.EmployeeID)
             {
@@ -53,9 +55,9 @@ namespace ShiftSchedulerAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployee(int id)
+        public async Task<IActionResult> DeleteEmployee(int id) 
         {
-            await _employeeLogic.DeleteEmployee(id);
+            await _employeeLogic.RemoveEmployee(id);
             return NoContent();
         }
     }
