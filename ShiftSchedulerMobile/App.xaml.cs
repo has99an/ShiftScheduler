@@ -1,4 +1,5 @@
-﻿namespace ShiftSchedulerMobile
+﻿using ShiftSchedulerMobile.Views;
+namespace ShiftSchedulerMobile
 {
     public partial class App : Application
     {
@@ -6,7 +7,7 @@
         {
             InitializeComponent();
 
-            MainPage = new AppShell();
+            MainPage = new NavigationPage(new LoginPage());
         }
     }
 }
