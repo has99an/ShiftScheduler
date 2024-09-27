@@ -31,8 +31,8 @@ namespace ShiftSchedulerAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddLogin([FromBody] LoginDTO login)
         {
-            string salt = GenerateSalt(); // Generer salt ved oprettelse af login
-            await _loginLogic.AddLogin(login); // Send salt til metoden i Business Logic
+            string salt = GenerateSalt(); 
+            await _loginLogic.AddLogin(login); 
             return CreatedAtAction(nameof(Login), new { email = login.Email }, login);
         }
 
@@ -47,11 +47,18 @@ namespace ShiftSchedulerAPI.Controllers
             return Ok(login);
         }
 
+        [HttpGet] 
+        public async Task<IActionResult> GetAllLogins()
+        {
+            var logins = await _loginLogic.GetAllLogins();
+            return Ok(logins);
+        }
+
+
         [HttpPut]
         public async Task<IActionResult> UpdateLogin([FromBody] LoginDTO login)
         {
-            // Opdatering uden salt
-            await _loginLogic.UpdateLogin(login); // Opdater login uden salt
+            await _loginLogic.UpdateLogin(login); 
             return NoContent();
         }
 
@@ -62,7 +69,7 @@ namespace ShiftSchedulerAPI.Controllers
             return NoContent();
         }
 
-        private string GenerateSalt() // Helper metode til at generere salt
+        private string GenerateSalt() 
         {
             byte[] saltBytes = new byte[16];
             using (var rng = new RNGCryptoServiceProvider())
