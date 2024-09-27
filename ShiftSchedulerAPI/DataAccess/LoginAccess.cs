@@ -107,28 +107,57 @@ namespace ShiftSchedulerAPI.DataAccess
 
             try
             {
-                string salt = GenerateSalt(); // Generer salt
-                string hashedPassword = HashPassword(login.Password, salt); // Hash password med salt
-
-                // Opdateret indsættelsesforespørgsel
-                string insertString = "INSERT INTO Logins (Email, Password, Salt) VALUES (@Email, @Password, @Salt); SELECT SCOPE_IDENTITY();";
-
                 using (SqlConnection con = new SqlConnection(_connectionString))
-                using (SqlCommand createCommand = new SqlCommand(insertString, con))
                 {
-                    createCommand.Parameters.AddWithValue("@Email", login.Email);
-                    createCommand.Parameters.AddWithValue("@Password", hashedPassword);
-                    createCommand.Parameters.AddWithValue("@Salt", salt);
-
                     con.Open();
-                    object result = createCommand.ExecuteScalar();
-                    if (result != null && result != DBNull.Value)
+
+                    // Tjek om e-mail findes i Employees-tabellen
+                    string employeeCheckQuery = "SELECT COUNT(1) FROM Employees WHERE Mail = @Email";
+                    using (SqlCommand employeeCheckCommand = new SqlCommand(employeeCheckQuery, con))
                     {
-                        insertedId = Convert.ToInt32(result);
+                        employeeCheckCommand.Parameters.AddWithValue("@Email", login.Email);
+                        int employeeExists = (int)employeeCheckCommand.ExecuteScalar();
+
+                        if (employeeExists == 0)
+                        {
+                            throw new Exception("Employee with the given email does not exist.");
+                        }
                     }
-                    else
+
+                    // Tjek om e-mail allerede findes i Logins-tabellen
+                    string loginCheckQuery = "SELECT COUNT(1) FROM Logins WHERE Email = @Email";
+                    using (SqlCommand loginCheckCommand = new SqlCommand(loginCheckQuery, con))
                     {
-                        throw new Exception("Failed to insert login record; no ID was returned.");
+                        loginCheckCommand.Parameters.AddWithValue("@Email", login.Email);
+                        int loginExists = (int)loginCheckCommand.ExecuteScalar();
+
+                        if (loginExists > 0)
+                        {
+                            throw new Exception("A login with this email already exists.");
+                        }
+                    }
+
+                    // Generer salt og hash password
+                    string salt = GenerateSalt();
+                    string hashedPassword = HashPassword(login.Password, salt);
+
+                    // Indsæt login-oplysninger
+                    string insertString = "INSERT INTO Logins (Email, Password, Salt) VALUES (@Email, @Password, @Salt); SELECT SCOPE_IDENTITY();";
+                    using (SqlCommand createCommand = new SqlCommand(insertString, con))
+                    {
+                        createCommand.Parameters.AddWithValue("@Email", login.Email);
+                        createCommand.Parameters.AddWithValue("@Password", hashedPassword);
+                        createCommand.Parameters.AddWithValue("@Salt", salt);
+
+                        object result = createCommand.ExecuteScalar();
+                        if (result != null && result != DBNull.Value)
+                        {
+                            insertedId = Convert.ToInt32(result);
+                        }
+                        else
+                        {
+                            throw new Exception("Failed to insert login record; no ID was returned.");
+                        }
                     }
                 }
             }
