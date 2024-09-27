@@ -24,18 +24,55 @@ namespace ShiftSchedulerAPI.DataAccess
         public Employee ValidateEmployee(string email, string password)
         {
             Employee foundEmployee = null;
+            Login foundLogin = null;
 
             try
             {
-                string queryString = "SELECT * FROM Employees WHERE Mail = @Email";
-
+                // Først, hent loginoplysninger fra Logins tabellen baseret på e-mail
+                string loginQuery = "SELECT * FROM Logins WHERE Email = @Email";
                 using (SqlConnection con = new SqlConnection(_connectionString))
-                using (SqlCommand readCommand = new SqlCommand(queryString, con))
+                using (SqlCommand loginCommand = new SqlCommand(loginQuery, con))
                 {
-                    readCommand.Parameters.AddWithValue("@Email", email);
+                    loginCommand.Parameters.AddWithValue("@Email", email);
 
                     con.Open();
-                    using (SqlDataReader employeeReader = readCommand.ExecuteReader())
+                    using (SqlDataReader loginReader = loginCommand.ExecuteReader())
+                    {
+                        if (loginReader.Read())
+                        {
+                            foundLogin = new Login
+                            {
+                                Email = loginReader.GetString(loginReader.GetOrdinal("Email")),
+                                Password = loginReader.GetString(loginReader.GetOrdinal("Password")),
+                                Salt = loginReader.GetString(loginReader.GetOrdinal("Salt"))
+                            };
+                        }
+                    }
+                }
+
+                // Hvis loginoplysninger ikke findes, returner null
+                if (foundLogin == null)
+                {
+                    return null;
+                }
+
+                // Valider det indtastede password ved at hashe det med det lagrede salt
+                string hashedEnteredPassword = HashPassword(password, foundLogin.Salt);
+                if (hashedEnteredPassword != foundLogin.Password)
+                {
+                    // Hvis adgangskoderne ikke matcher, returner null (forkert password)
+                    return null;
+                }
+
+                // Hvis adgangskoden er korrekt, fortsæt med at hente medarbejderen fra Employees tabellen
+                string employeeQuery = "SELECT * FROM Employees WHERE Mail = @Email";
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (SqlCommand employeeCommand = new SqlCommand(employeeQuery, con))
+                {
+                    employeeCommand.Parameters.AddWithValue("@Email", email);
+
+                    con.Open();
+                    using (SqlDataReader employeeReader = employeeCommand.ExecuteReader())
                     {
                         if (employeeReader.Read())
                         {
