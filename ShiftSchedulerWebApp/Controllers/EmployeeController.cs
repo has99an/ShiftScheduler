@@ -60,6 +60,7 @@ namespace ShiftSchedulerWebApp.Controllers
             return View(employee);
         }
 
+
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {

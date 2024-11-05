@@ -55,9 +55,11 @@ namespace ShiftSchedulerWebApp.ServiceLayer
         public async Task<bool> UpdateEmployee(Employee employee)
         {
             var putJson = new StringContent(JsonConvert.SerializeObject(employee), Encoding.UTF8, "application/json");
+            _employeeService.UseUrl = $"{_serviceBaseUrl}{employee.EmployeeID}";
             HttpResponseMessage? response = await _employeeService.CallServicePut(putJson);
             return response != null && response.IsSuccessStatusCode;
         }
+
 
         public async Task<bool> DeleteEmployee(int employeeId)
         {
