@@ -67,7 +67,7 @@ namespace ShiftSchedulerWebApp.Controllers
             if (shift == null) return NotFound();
 
             await _shiftService.DeleteShift(id);
-            return NoContent(); // Returner 204 No Content for successful delete
+            return NoContent(); 
         }
 
 

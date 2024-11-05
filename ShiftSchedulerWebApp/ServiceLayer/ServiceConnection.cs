@@ -67,7 +67,7 @@ namespace ShiftSchedulerWebApp.ServiceLayer
         {
             if (UseUrl != null)
             {
-                UseUrl = $"{BaseUrl}{id}";
+                UseUrl = $"{BaseUrl}/{id}";
                 HttpResponseMessage? hrm = await HttpEnabler.GetAsync(UseUrl);
                 return hrm;
             }
