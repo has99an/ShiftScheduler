@@ -17,6 +17,7 @@ namespace ShiftSchedulerAPI.Converters
                 PhoneNumber = employee.PhoneNumber,
                 StreetName = employee.StreetName,
                 ZipCode = employee.ZipCode,
+                City = employee.City,
                 HouseNo = employee.HouseNo,
                 EmployeeType = employee.EmployeeType
             };

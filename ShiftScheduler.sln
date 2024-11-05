@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShiftSchedulerAPI", "ShiftS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftSchedulerMobile", "ShiftSchedulerMobile\ShiftSchedulerMobile.csproj", "{72C8765E-52BE-4CC5-B7F5-445D609B8819}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftSchedulerWebApp", "ShiftSchedulerWebApp\ShiftSchedulerWebApp.csproj", "{3218C1FB-FED3-458C-8AFD-593A609065C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{72C8765E-52BE-4CC5-B7F5-445D609B8819}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72C8765E-52BE-4CC5-B7F5-445D609B8819}.Release|Any CPU.Build.0 = Release|Any CPU
 		{72C8765E-52BE-4CC5-B7F5-445D609B8819}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{3218C1FB-FED3-458C-8AFD-593A609065C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3218C1FB-FED3-458C-8AFD-593A609065C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3218C1FB-FED3-458C-8AFD-593A609065C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3218C1FB-FED3-458C-8AFD-593A609065C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

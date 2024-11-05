@@ -81,7 +81,7 @@ namespace ShiftSchedulerAPI.DataAccess
                                 EmployeeID = employeeReader.GetInt32(employeeReader.GetOrdinal("EmployeeID")),
                                 FirstName = employeeReader.GetString(employeeReader.GetOrdinal("FirstName")),
                                 LastName = employeeReader.GetString(employeeReader.GetOrdinal("LastName")),
-                                ZipCode = employeeReader.GetString(employeeReader.GetOrdinal("ZipCode")),
+                                ZipCode = employeeReader.GetInt32(employeeReader.GetOrdinal("ZipCode")),
                                 StreetName = employeeReader.GetString(employeeReader.GetOrdinal("StreetName")),
                                 HouseNo = employeeReader.GetString(employeeReader.GetOrdinal("HouseNo")),
                                 Mail = employeeReader.GetString(employeeReader.GetOrdinal("Mail")),

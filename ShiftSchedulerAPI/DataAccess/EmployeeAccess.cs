@@ -25,7 +25,7 @@ namespace ShiftSchedulerAPI.DataAccess
 
             try
             {
-                string queryString = "SELECT * FROM Employees";
+                string queryString = "SELECT e.*, z.City FROM Employees e JOIN ZipCode z ON e.ZipCode = z.ZipCode";
 
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 using (SqlCommand readCommand = new SqlCommand(queryString, con))
@@ -55,7 +55,7 @@ namespace ShiftSchedulerAPI.DataAccess
 
             try
             {
-                string queryString = "SELECT * FROM Employees WHERE EmployeeID = @EmployeeId";
+                string queryString = "SELECT e.*, z.City FROM Employees e JOIN ZipCode z ON e.ZipCode = z.ZipCode WHERE e.EmployeeID = @EmployeeId";
 
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 using (SqlCommand readCommand = new SqlCommand(queryString, con))
@@ -84,6 +84,11 @@ namespace ShiftSchedulerAPI.DataAccess
         public int AddEmployee(Employee employee)
         {
             int insertedId = -1;
+
+            if (!ZipCodeExists(employee.ZipCode))
+            {
+                throw new InvalidOperationException($"The ZipCode '{employee.ZipCode}' does not exist.");
+            }
 
             try
             {
@@ -170,7 +175,8 @@ namespace ShiftSchedulerAPI.DataAccess
             int employeeId = employeeReader.GetInt32(employeeReader.GetOrdinal("employeeID"));
             string firstName = employeeReader.GetString(employeeReader.GetOrdinal("firstName"));
             string lastName = employeeReader.GetString(employeeReader.GetOrdinal("lastName"));
-            string zipCode = employeeReader.GetString(employeeReader.GetOrdinal("zipCode"));
+            int zipCode = employeeReader.GetInt32(employeeReader.GetOrdinal("zipCode"));
+            string city = employeeReader.GetString(employeeReader.GetOrdinal("City"));
             string streetName = employeeReader.GetString(employeeReader.GetOrdinal("streetName"));
             string houseNo = employeeReader.GetString(employeeReader.GetOrdinal("houseNo"));
             string mail = employeeReader.GetString(employeeReader.GetOrdinal("mail"));
@@ -188,6 +194,7 @@ namespace ShiftSchedulerAPI.DataAccess
                 FirstName = firstName,
                 LastName = lastName,
                 ZipCode = zipCode,
+                City = city,
                 StreetName = streetName,
                 HouseNo = houseNo,
                 Mail = mail,
@@ -195,5 +202,18 @@ namespace ShiftSchedulerAPI.DataAccess
                 EmployeeType = employeeType
             };
         }
+
+        private bool ZipCodeExists(int zipCode)
+        {
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            using (SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM ZipCode WHERE ZipCode = @ZipCode", con))
+            {
+                command.Parameters.AddWithValue("@ZipCode", zipCode);
+                con.Open();
+                int count = (int)command.ExecuteScalar();
+                return count > 0;
+            }
+        }
+
     }
 }

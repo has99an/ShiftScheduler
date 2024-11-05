@@ -1,0 +1,65 @@
+﻿@model IEnumerable<ShiftSchedulerWebApp.Models.Employee>
+
+<h2>Employees</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Employee ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Zip Code</th>
+            <th>City</th>
+            <th>Street Name</th>
+            <th>House No</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Employee Type</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.EmployeeID</td>
+                <td>@employee.FirstName</td>
+                <td>@employee.LastName</td>
+                <td>@employee.ZipCode</td>
+                <td>@employee.City</td>
+                <td>@employee.StreetName</td>
+                <td>@employee.HouseNo</td>
+                <td>@employee.Mail</td>
+                <td>@employee.PhoneNumber</td>
+                <td>@employee.EmployeeType</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@employee.EmployeeID">Edit</a> |
+                    <a href="#" onclick="confirmDelete(@employee.EmployeeID)">Delete</a> 
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    function confirmDelete(employeeId) {
+        if (confirm("Er du sikker på, at du vil slette denne medarbejder?")) {
+            // Hvis brugeren bekræfter, send en DELETE-anmodning
+            fetch(`/Employee/Delete/${employeeId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Medarbejderen er slettet.");
+                        location.reload(); // Opdater siden for at vise de opdaterede data
+                    } else {
+                        alert("Fejl ved sletning af medarbejderen.");
+                    }
+                })
+                .catch(error => alert("Der opstod en fejl: " + error));
+        }
+    }
+</script>
