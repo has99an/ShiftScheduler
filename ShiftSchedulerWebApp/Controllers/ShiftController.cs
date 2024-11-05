@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ShiftSchedulerWebApp.BusinessLayer;
 using ShiftSchedulerWebApp.Models;
 
@@ -7,10 +8,12 @@ namespace ShiftSchedulerWebApp.Controllers
     public class ShiftController : Controller
     {
         private readonly IShiftService _shiftService;
+        private readonly IEmployeeService _employeeService;
 
-        public ShiftController(IShiftService shiftService)
+        public ShiftController(IShiftService shiftService, IEmployeeService employeeService)
         {
             _shiftService = shiftService;
+            _employeeService = employeeService;
         }
 
         public async Task<IActionResult> Index()
@@ -26,10 +29,22 @@ namespace ShiftSchedulerWebApp.Controllers
             return View(shift);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var employees = await _employeeService.GetEmployees();
+
+            var employeeSelectList = employees.Select(e => new
+            {
+                EmployeeID = e.EmployeeID,
+                FullName = $"{e.FirstName} {e.LastName}" 
+            });
+
+            ViewBag.Employees = new SelectList(employeeSelectList, "EmployeeID", "FullName");
+
+            return View(new Shift());
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> Create(Shift shift)

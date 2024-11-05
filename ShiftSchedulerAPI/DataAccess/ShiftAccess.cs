@@ -87,17 +87,26 @@ namespace ShiftSchedulerAPI.DataAccess
 
             try
             {
-                string insertString = "INSERT INTO Shifts (EmployeeID, StartTime, EndTime, Date, Type, Status) OUTPUT INSERTED.ShiftID VALUES (@EmployeeID, @StartTime, @EndTime, @Date, @Type, @Status)";
+                // Dynamisk SQL-indsættelse baseret på ShiftType
+                string insertString = "INSERT INTO Shifts (StartTime, EndTime, Date, Type, Status" +
+                                      (shift.Type != ShiftType.Open ? ", EmployeeID" : "") +
+                                      ") OUTPUT INSERTED.ShiftID VALUES (@StartTime, @EndTime, @Date, @Type, @Status" +
+                                      (shift.Type != ShiftType.Open ? ", @EmployeeID" : "") + ")";
 
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 using (SqlCommand createCommand = new SqlCommand(insertString, con))
                 {
-                    createCommand.Parameters.AddWithValue("@EmployeeID", shift.EmployeeID);
                     createCommand.Parameters.AddWithValue("@StartTime", shift.StartTime);
                     createCommand.Parameters.AddWithValue("@EndTime", shift.EndTime);
                     createCommand.Parameters.AddWithValue("@Date", shift.Date);
                     createCommand.Parameters.AddWithValue("@Type", shift.Type);
                     createCommand.Parameters.AddWithValue("@Status", shift.Status);
+
+                    // Tilføj EmployeeID kun hvis det ikke er en åben shift
+                    if (shift.Type != ShiftType.Open)
+                    {
+                        createCommand.Parameters.AddWithValue("@EmployeeID", shift.EmployeeID);
+                    }
 
                     con.Open();
                     insertedId = (int)createCommand.ExecuteScalar();
@@ -111,6 +120,7 @@ namespace ShiftSchedulerAPI.DataAccess
 
             return insertedId;
         }
+
 
         public void UpdateShift(Shift shift)
         {
