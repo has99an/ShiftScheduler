@@ -6,6 +6,7 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
     public interface IShiftLogic
     {
         Task<List<ShiftDTO>> GetAllShifts();
+        Task<List<ShiftDTO>> GetShiftsByEmployeeId(int employeeId);
         Task<ShiftDTO> GetShiftById(int shiftId);
         Task<int> AddShift(ShiftDTO shift);
         Task UpdateShift(ShiftDTO shift);

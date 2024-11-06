@@ -23,6 +23,17 @@ namespace ShiftSchedulerAPI.Controllers
             return Ok(shifts);
         }
 
+        [HttpGet("{id}/shifts")]
+        public async Task<IActionResult> GetShiftsByEmployeeId(int id)
+        {
+            var shifts = await _shiftLogic.GetShiftsByEmployeeId(id);
+            if (shifts == null || shifts.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(shifts);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<ShiftDTO>> Get(int id)
         {

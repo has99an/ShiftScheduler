@@ -49,6 +49,38 @@ namespace ShiftSchedulerAPI.DataAccess
             return foundShifts;
         }
 
+        public List<Shift> GetShiftsByEmployeeId(int employeeId)
+        {
+            List<Shift> foundShifts = new List<Shift>();
+
+            try
+            {
+                string queryString = "SELECT * FROM Shifts WHERE EmployeeID = @EmployeeId";
+
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (SqlCommand readCommand = new SqlCommand(queryString, con))
+                {
+                    readCommand.Parameters.AddWithValue("@EmployeeId", employeeId);
+
+                    con.Open();
+                    SqlDataReader shiftReader = readCommand.ExecuteReader();
+
+                    while (shiftReader.Read())
+                    {
+                        Shift shift = GetShiftFromReader(shiftReader);
+                        foundShifts.Add(shift);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving shifts by employee ID: {ex.Message}");
+                throw;
+            }
+
+            return foundShifts;
+        }
+
         public Shift GetShiftById(int id)
         {
             Shift foundShift = null;
@@ -87,7 +119,6 @@ namespace ShiftSchedulerAPI.DataAccess
 
             try
             {
-                // Dynamisk SQL-indsættelse baseret på ShiftType
                 string insertString = "INSERT INTO Shifts (StartTime, EndTime, Date, Type, Status" +
                                       (shift.Type != ShiftType.Open ? ", EmployeeID" : "") +
                                       ") OUTPUT INSERTED.ShiftID VALUES (@StartTime, @EndTime, @Date, @Type, @Status" +

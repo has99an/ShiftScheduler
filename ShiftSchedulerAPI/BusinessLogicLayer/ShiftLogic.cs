@@ -31,6 +31,20 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
             }
         }
 
+        public async Task<List<ShiftDTO>> GetShiftsByEmployeeId(int employeeId)
+        {
+            try
+            {
+                List<Shift> shifts = await Task.Run(() => _shiftAccess.GetShiftsByEmployeeId(employeeId));
+                return ShiftConverter.ToDTOCollection(shifts);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting shifts by employee ID: {ex.Message}");
+                throw;
+            }
+        }
+
         public async Task<ShiftDTO> GetShiftById(int shiftId)
         {
             try
