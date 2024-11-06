@@ -25,7 +25,12 @@ namespace ShiftSchedulerAPI.DataAccess
 
             try
             {
-                string queryString = "SELECT * FROM Shifts";
+                string queryString = @"
+                                        SELECT s.*, 
+                                               e.FirstName + ' ' + e.LastName AS EmployeeFullName 
+                                        FROM Shifts s
+                                        LEFT JOIN Employees e ON s.EmployeeID = e.EmployeeID";
+
 
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 using (SqlCommand readCommand = new SqlCommand(queryString, con))
@@ -48,6 +53,33 @@ namespace ShiftSchedulerAPI.DataAccess
 
             return foundShifts;
         }
+
+        public string GetEmployeeFullNameById(int employeeId)
+        {
+            string fullName = null;
+
+            try
+            {
+                string query = "SELECT FirstName + ' ' + LastName FROM Employees WHERE EmployeeID = @EmployeeId";
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (SqlCommand command = new SqlCommand(query, con))
+                {
+                    command.Parameters.AddWithValue("@EmployeeId", employeeId);
+
+                    con.Open();
+                    var result = command.ExecuteScalar();
+                    fullName = result as string;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving employee full name: {ex.Message}");
+                throw;
+            }
+
+            return fullName;
+        }
+
 
         public List<Shift> GetShiftsByEmployeeId(int employeeId)
         {
@@ -87,20 +119,23 @@ namespace ShiftSchedulerAPI.DataAccess
 
             try
             {
-                string queryString = "SELECT * FROM Shifts WHERE ShiftID = @Id";
+                string queryString = @"
+                                        SELECT s.*, 
+                                               e.FirstName + ' ' + e.LastName AS EmployeeFullName 
+                                        FROM Shifts s
+                                        LEFT JOIN Employees e ON s.EmployeeID = e.EmployeeID
+                                        WHERE s.ShiftID = @Id";
 
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 using (SqlCommand readCommand = new SqlCommand(queryString, con))
                 {
                     readCommand.Parameters.AddWithValue("@Id", id);
-
                     con.Open();
-                    using (SqlDataReader shiftReader = readCommand.ExecuteReader())
+                    SqlDataReader reader = readCommand.ExecuteReader();
+
+                    if (reader.Read())
                     {
-                        if (shiftReader.Read())
-                        {
-                            foundShift = GetShiftFromReader(shiftReader);
-                        }
+                        foundShift = GetShiftFromReader(reader);
                     }
                 }
             }
@@ -113,16 +148,17 @@ namespace ShiftSchedulerAPI.DataAccess
             return foundShift;
         }
 
+
         public int AddShift(Shift shift)
         {
             int insertedId = -1;
 
             try
             {
-                string insertString = "INSERT INTO Shifts (StartTime, EndTime, Date, Type, Status" +
-                                      (shift.Type != ShiftType.Open ? ", EmployeeID" : "") +
-                                      ") OUTPUT INSERTED.ShiftID VALUES (@StartTime, @EndTime, @Date, @Type, @Status" +
-                                      (shift.Type != ShiftType.Open ? ", @EmployeeID" : "") + ")";
+                string insertString = "INSERT INTO Shifts (StartTime, EndTime, Date" +
+                                      (shift.EmployeeID.HasValue ? ", EmployeeID" : "") +
+                                      ") OUTPUT INSERTED.ShiftID VALUES (@StartTime, @EndTime, @Date" +
+                                      (shift.EmployeeID.HasValue ? ", @EmployeeID" : "") + ")";
 
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 using (SqlCommand createCommand = new SqlCommand(insertString, con))
@@ -130,11 +166,8 @@ namespace ShiftSchedulerAPI.DataAccess
                     createCommand.Parameters.AddWithValue("@StartTime", shift.StartTime);
                     createCommand.Parameters.AddWithValue("@EndTime", shift.EndTime);
                     createCommand.Parameters.AddWithValue("@Date", shift.Date);
-                    createCommand.Parameters.AddWithValue("@Type", shift.Type);
-                    createCommand.Parameters.AddWithValue("@Status", shift.Status);
 
-                    // Tilføj EmployeeID kun hvis det ikke er en åben shift
-                    if (shift.Type != ShiftType.Open)
+                    if (shift.EmployeeID.HasValue)
                     {
                         createCommand.Parameters.AddWithValue("@EmployeeID", shift.EmployeeID);
                     }
@@ -153,11 +186,12 @@ namespace ShiftSchedulerAPI.DataAccess
         }
 
 
+
         public void UpdateShift(Shift shift)
         {
             try
             {
-                string updateString = "UPDATE Shifts SET EmployeeID = @EmployeeID, StartTime = @StartTime, EndTime = @EndTime, Date = @Date, Type = @Type, Status = @Status WHERE ShiftID = @ShiftID";
+                string updateString = "UPDATE Shifts SET EmployeeID = @EmployeeID, StartTime = @StartTime, EndTime = @EndTime, Date = @Date WHERE ShiftID = @ShiftID";
 
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 using (SqlCommand updateCommand = new SqlCommand(updateString, con))
@@ -166,8 +200,6 @@ namespace ShiftSchedulerAPI.DataAccess
                     updateCommand.Parameters.AddWithValue("@StartTime", shift.StartTime);
                     updateCommand.Parameters.AddWithValue("@EndTime", shift.EndTime);
                     updateCommand.Parameters.AddWithValue("@Date", shift.Date);
-                    updateCommand.Parameters.AddWithValue("@Type", shift.Type);
-                    updateCommand.Parameters.AddWithValue("@Status", shift.Status);
                     updateCommand.Parameters.AddWithValue("@ShiftID", shift.ShiftID);
 
                     con.Open();
@@ -210,8 +242,6 @@ namespace ShiftSchedulerAPI.DataAccess
             TimeSpan endTime = shiftReader.GetTimeSpan(shiftReader.GetOrdinal("endTime"));
             DateTime dateTime = shiftReader.GetDateTime(shiftReader.GetOrdinal("date"));
             DateOnly date = DateOnly.FromDateTime(dateTime);
-            ShiftType type = (ShiftType)Enum.Parse(typeof(ShiftType), shiftReader.GetString(shiftReader.GetOrdinal("type")));
-            ShiftStatus status = (ShiftStatus)Enum.Parse(typeof(ShiftStatus), shiftReader.GetString(shiftReader.GetOrdinal("status")));
 
             return new Shift
             {
@@ -219,9 +249,7 @@ namespace ShiftSchedulerAPI.DataAccess
                 EmployeeID = employeeID,
                 StartTime = startTime,
                 EndTime = endTime,
-                Date = date,
-                Type = type,
-                Status = status
+                Date = date
             };
         }
     }

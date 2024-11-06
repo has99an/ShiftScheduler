@@ -22,7 +22,18 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
             try
             {
                 List<Shift> shifts = await Task.Run(() => _shiftAccess.GetAllShifts());
-                return ShiftConverter.ToDTOCollection(shifts);
+                var shiftDtos = new List<ShiftDTO>();
+
+                foreach (var shift in shifts)
+                {
+                    string employeeFullName = shift.EmployeeID.HasValue
+                        ? await Task.Run(() => _shiftAccess.GetEmployeeFullNameById(shift.EmployeeID.Value))
+                        : "Open";
+
+                    shiftDtos.Add(ShiftConverter.ToDTO(shift, employeeFullName));
+                }
+
+                return shiftDtos;
             }
             catch (Exception ex)
             {
@@ -36,7 +47,18 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
             try
             {
                 List<Shift> shifts = await Task.Run(() => _shiftAccess.GetShiftsByEmployeeId(employeeId));
-                return ShiftConverter.ToDTOCollection(shifts);
+                var shiftDtos = new List<ShiftDTO>();
+
+                foreach (var shift in shifts)
+                {
+                    string employeeFullName = shift.EmployeeID.HasValue
+                        ? await Task.Run(() => _shiftAccess.GetEmployeeFullNameById(shift.EmployeeID.Value))
+                        : "Open";
+
+                    shiftDtos.Add(ShiftConverter.ToDTO(shift, employeeFullName));
+                }
+
+                return shiftDtos;
             }
             catch (Exception ex)
             {
@@ -50,7 +72,11 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
             try
             {
                 Shift shift = await Task.Run(() => _shiftAccess.GetShiftById(shiftId));
-                return ShiftConverter.ToDTO(shift);
+                string employeeFullName = shift.EmployeeID.HasValue
+                    ? await Task.Run(() => _shiftAccess.GetEmployeeFullNameById(shift.EmployeeID.Value))
+                    : "Open";
+
+                return ShiftConverter.ToDTO(shift, employeeFullName);
             }
             catch (Exception ex)
             {
