@@ -162,7 +162,7 @@ namespace ShiftSchedulerAPI.DataAccess
                 using (SqlConnection con = new SqlConnection(_connectionString))
                 using (SqlCommand updateCommand = new SqlCommand(updateString, con))
                 {
-                    updateCommand.Parameters.AddWithValue("@EmployeeID", shift.EmployeeID);
+                    updateCommand.Parameters.AddWithValue("@EmployeeID", (object)shift.EmployeeID ?? DBNull.Value);
                     updateCommand.Parameters.AddWithValue("@StartTime", shift.StartTime);
                     updateCommand.Parameters.AddWithValue("@EndTime", shift.EndTime);
                     updateCommand.Parameters.AddWithValue("@Date", shift.Date);

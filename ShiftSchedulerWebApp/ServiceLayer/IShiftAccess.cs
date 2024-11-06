@@ -7,6 +7,7 @@ namespace ShiftSchedulerWebApp.ServiceLayer
     public interface IShiftAccess
     {
         Task<List<Shift>?> GetShifts();
+        Task<List<Shift>?> GetShiftsByEmployeeId(int employeeId);
         Task<Shift?> GetShiftById(int shiftId);
         Task<bool> CreateShift(Shift shift);
         Task<bool> UpdateShift(Shift shift);

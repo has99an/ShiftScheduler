@@ -19,6 +19,12 @@ namespace ShiftSchedulerWebApp.BusinessLayer
             return await _shiftAccess.GetShifts();
         }
 
+        public async Task<List<Shift>?> GetShiftsByEmployeeId(int employeeId)  
+        {
+            var shifts = await _shiftAccess.GetShifts();
+            return shifts?.FindAll(shift => shift.EmployeeID == employeeId);
+        }
+
         public async Task<Shift?> GetShiftById(int shiftId)
         {
             return await _shiftAccess.GetShiftById(shiftId);

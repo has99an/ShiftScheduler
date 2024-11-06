@@ -45,7 +45,6 @@ namespace ShiftSchedulerWebApp.Controllers
         }
 
 
-
         [HttpPost]
         public async Task<IActionResult> Create(Shift shift)
         {
@@ -61,8 +60,19 @@ namespace ShiftSchedulerWebApp.Controllers
         {
             var shift = await _shiftService.GetShiftById(id);
             if (shift == null) return NotFound();
+
+            // Sikre, at ViewBag.ShiftTypes og ViewBag.Employees er sat
+            ViewBag.ShiftTypes = new SelectList(Enum.GetValues(typeof(ShiftType)).Cast<ShiftType>());
+            var employees = await _employeeService.GetEmployees();
+            if (employees == null) return NotFound(); // Fejlsikring
+
+            ViewBag.Employees = new SelectList(employees, "EmployeeID", "FirstName");
+            ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(ShiftStatus)));
+
             return View(shift);
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> Edit(Shift shift)

@@ -7,9 +7,11 @@ namespace ShiftSchedulerWebApp.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IShiftService _shiftService;
 
-        public EmployeeController(IEmployeeService employeeService)
+        public EmployeeController(IShiftService shiftService, IEmployeeService employeeService)
         {
+            _shiftService = shiftService;
             _employeeService = employeeService;
         }
 
@@ -17,6 +19,12 @@ namespace ShiftSchedulerWebApp.Controllers
         {
             var employees = await _employeeService.GetEmployees();
             return View(employees);
+        }
+
+        public async Task<IActionResult> Shifts(int employeeId)
+        {
+            var shifts = await _shiftService.GetShiftsByEmployeeId(employeeId);
+            return View(shifts);
         }
 
         public async Task<IActionResult> Details(int id)

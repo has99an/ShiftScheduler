@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<ShiftSchedulerWebApp.Models.Shift>
 
-<h2>Shifts</h2>
+<h2>Shifts for Employee</h2>
 
 <p>
-    <a asp-action="Create">Create New Shift</a>
+    <a asp-action="Create" asp-route-employeeId="@Model.First().EmployeeID">Create New Shift</a>
 </p>
 
 <table class="table">
@@ -29,29 +29,29 @@
                 <td>@shift.Type</td>
                 <td>@shift.Status</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@shift.ShiftID">Edit</a> |
-                    <a href="#" onclick="confirmDelete(@shift.ShiftID)">Delete</a> 
+                    <a asp-controller="Shift" asp-action="Edit" asp-route-id="@shift.ShiftID">Edit</a>
+                    <a href="#" onclick="confirmDelete(@shift.ShiftID)">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
 <script>
     function confirmDelete(shiftId) {
         if (confirm("Er du sikker på, at du vil slette dette skift?")) {
-            // Send en DELETE-anmodning til serveren
             fetch(`/Shift/Delete/${shiftId}`, {
                 method: 'DELETE'
             })
-                .then(response => {
-                    if (response.ok) {
-                        alert("Skiftet er slettet.");
-                        location.reload(); // Opdater siden for at vise de opdaterede data
-                    } else {
-                        alert("Fejl ved sletning af skiftet.");
-                    }
-                })
-                .catch(error => alert("Der opstod en fejl: " + error));
+            .then(response => {
+                if (response.ok) {
+                    alert("Skiftet er slettet.");
+                    location.reload();
+                } else {
+                    alert("Fejl ved sletning af skiftet.");
+                }
+            })
+            .catch(error => alert("Der opstod en fejl: " + error));
         }
     }
 </script>

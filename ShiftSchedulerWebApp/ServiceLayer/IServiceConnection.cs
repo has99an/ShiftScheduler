@@ -6,6 +6,7 @@
         string? UseUrl { get; set; }
 
         Task<HttpResponseMessage?> CallServiceGet();
+        Task<HttpResponseMessage?> CallServiceGet(string url);
         Task<HttpResponseMessage?> CallServicePost(StringContent postJson);
         Task<HttpResponseMessage?> CallServicePut(StringContent postJson);
         Task<HttpResponseMessage?> CallServiceDelete();

@@ -26,6 +26,16 @@ namespace ShiftSchedulerWebApp.ServiceLayer
             return hrm;
         }
 
+        public async Task<HttpResponseMessage?> CallServiceGet(string url)
+        {
+            HttpResponseMessage? hrm = null;
+            if (!string.IsNullOrEmpty(url))
+            {
+                hrm = await HttpEnabler.GetAsync(url);  
+            }
+            return hrm;
+        }
+
         public async Task<HttpResponseMessage?> CallServicePost(StringContent postJson)
         {
             HttpResponseMessage? hrm = null;

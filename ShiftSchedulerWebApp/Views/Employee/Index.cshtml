@@ -37,8 +37,10 @@
                 <td>@employee.PhoneNumber</td>
                 <td>@employee.EmployeeType</td>
                 <td>
+                <td>
                     <a asp-action="Edit" asp-route-id="@employee.EmployeeID">Edit</a> |
-                    <a href="#" onclick="confirmDelete(@employee.EmployeeID)">Delete</a> 
+                    <a href="#" onclick="confirmDelete(@employee.EmployeeID)">Delete</a> |
+                    <a asp-action="Shifts" asp-route-employeeId="@employee.EmployeeID">Shifts</a>
                 </td>
             </tr>
         }

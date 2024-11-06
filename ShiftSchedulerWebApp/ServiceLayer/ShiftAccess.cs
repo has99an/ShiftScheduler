@@ -31,6 +31,19 @@ namespace ShiftSchedulerWebApp.ServiceLayer
             return shifts;
         }
 
+        public async Task<List<Shift>?> GetShiftsByEmployeeId(int employeeId)
+        {
+            List<Shift>? shifts = null;
+
+            HttpResponseMessage? response = await _shiftService.CallServiceGet($"{employeeId}/shifts");
+            if (response != null && response.IsSuccessStatusCode)
+            {
+                string jsonString = await response.Content.ReadAsStringAsync();
+                shifts = JsonConvert.DeserializeObject<List<Shift>>(jsonString);
+            }
+
+            return shifts;
+        }
         public async Task<Shift?> GetShiftById(int shiftId)
         {
             Shift? shift = null;
@@ -55,6 +68,7 @@ namespace ShiftSchedulerWebApp.ServiceLayer
         public async Task<bool> UpdateShift(Shift shift)
         {
             var putJson = new StringContent(JsonConvert.SerializeObject(shift), Encoding.UTF8, "application/json");
+            _shiftService.UseUrl = $"{_serviceBaseUrl}/{shift.ShiftID}";
             HttpResponseMessage? response = await _shiftService.CallServicePut(putJson);
             return response != null && response.IsSuccessStatusCode;
         }
