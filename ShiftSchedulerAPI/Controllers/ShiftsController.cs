@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShiftSchedulerAPI.BusinessLogicLayer;
 using ShiftSchedulerAPI.DTO;
-
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ShiftSchedulerAPI.Controllers
 {
@@ -64,12 +65,25 @@ namespace ShiftSchedulerAPI.Controllers
             return NoContent();
         }
 
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _shiftLogic.RemoveShift(id);
             return NoContent();
+        }
+
+        [HttpGet("fixed")]
+        public async Task<ActionResult<List<ShiftDTO>>> GetFixedShifts()
+        {
+            var shifts = await _shiftLogic.GetFixedShifts();
+            return Ok(shifts);
+        }
+
+        [HttpGet("open")]
+        public async Task<ActionResult<List<ShiftDTO>>> GetOpenShifts()
+        {
+            var shifts = await _shiftLogic.GetOpenShifts();
+            return Ok(shifts);
         }
     }
 }

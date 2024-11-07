@@ -24,25 +24,11 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Type"></label>
-        <select asp-for="Type" asp-items="ViewBag.ShiftTypes" class="form-control" onchange="toggleEmployeeDropdown()" required>
-            <option value="">Select Shift Type</option>
-        </select>
-        <span asp-validation-for="Type" class="text-danger"></span>
-    </div>
-
-    <div class="form-group" id="employeeDropdown" style="@(Model.Type == ShiftType.Fixed ? "display:block;" : "display:none;")">
         <label>Assign Employee</label>
         <select asp-for="EmployeeID" asp-items="ViewBag.Employees" class="form-control">
             <option value="">Select Employee</option>
         </select>
         <span asp-validation-for="EmployeeID" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Status"></label>
-        <select asp-for="Status" asp-items="ViewBag.StatusList" class="form-control"></select>
-        <span asp-validation-for="Status" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Save</button>
@@ -51,20 +37,3 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
-<script>
-    function toggleEmployeeDropdown() {
-        const typeSelect = document.querySelector('select[name="Type"]');
-        const employeeDropdown = document.getElementById('employeeDropdown');
-
-        if (typeSelect.value === 'Fixed') {
-            employeeDropdown.style.display = 'block';
-        } else {
-            employeeDropdown.style.display = 'none';
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        toggleEmployeeDropdown();
-    });
-</script>

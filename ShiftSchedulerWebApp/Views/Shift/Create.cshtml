@@ -22,18 +22,8 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="Type"></label>
-        <select asp-for="Type" class="form-control" onchange="toggleEmployeeDropdown()" required>
-            <option value="">Select Shift Type</option>
-            <option value="Fixed">Fixed</option>
-            <option value="Open">Open</option>
-        </select>
-        <span asp-validation-for="Type" class="text-danger"></span>
-    </div>
-
-    <div class="form-group" id="employeeDropdown" style="display:none;">
         <label>Assign Employee</label>
-        <select asp-for="EmployeeID" asp-items="ViewBag.Employees" class="form-control">
+        <select asp-for="EmployeeID" asp-items="ViewBag.Employees" class="form-control" required>
             <option value="">Select Employee</option>
         </select>
         <span asp-validation-for="EmployeeID" class="text-danger"></span>
@@ -45,22 +35,3 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
-<script>
-    function toggleEmployeeDropdown() {
-        const typeSelect = document.querySelector('select[name="Type"]');
-        const employeeDropdown = document.getElementById('employeeDropdown');
-
-        // Vis medarbejder-dropdown kun hvis 'Fixed' er valgt
-        if (typeSelect.value === 'Fixed') {
-            employeeDropdown.style.display = 'block';
-        } else {
-            employeeDropdown.style.display = 'none';
-        }
-    }
-
-    // Kald funktionen når siden indlæses for at sikre, at dropdownen er korrekt
-    document.addEventListener("DOMContentLoaded", function () {
-        toggleEmployeeDropdown();
-    });
-</script>

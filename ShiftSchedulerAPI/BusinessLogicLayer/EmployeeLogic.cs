@@ -86,5 +86,18 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
                 throw;
             }
         }
+
+        public async Task<string> GetEmployeeFullNameById(int employeeId)
+        {
+            try
+            {
+                return await Task.Run(() => _employeeAccess.GetEmployeeFullNameById(employeeId));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting employee full name by ID: {ex.Message}");
+                throw;
+            }
+        }
     }
 }

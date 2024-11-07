@@ -8,10 +8,12 @@ namespace ShiftSchedulerWebApp.BusinessLayer
     public class ShiftService : IShiftService
     {
         private readonly IShiftAccess _shiftAccess;
+        private readonly IEmployeeService _employeeService; 
 
-        public ShiftService(IShiftAccess shiftAccess)
+        public ShiftService(IShiftAccess shiftAccess, IEmployeeService employeeService)
         {
             _shiftAccess = shiftAccess;
+            _employeeService = employeeService;
         }
 
         public async Task<List<Shift>?> GetShifts()
@@ -43,6 +45,16 @@ namespace ShiftSchedulerWebApp.BusinessLayer
         public async Task<bool> DeleteShift(int shiftId)
         {
             return await _shiftAccess.DeleteShift(shiftId);
+        }
+
+        public async Task<string> GetEmployeeFullNameByEmployeeId(int employeeId)
+        {
+            var employee = await _employeeService.GetEmployeeById(employeeId);
+            if (employee != null)
+            {
+                return $"{employee.FirstName} {employee.LastName}";
+            }
+            return "Open";
         }
     }
 }

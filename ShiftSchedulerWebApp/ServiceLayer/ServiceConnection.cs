@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.Diagnostics;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace ShiftSchedulerWebApp.ServiceLayer
@@ -43,7 +45,7 @@ namespace ShiftSchedulerWebApp.ServiceLayer
             {
                 hrm = await HttpEnabler.PostAsync(UseUrl, postJson);
 
-                if (hrm.StatusCode == System.Net.HttpStatusCode.BadRequest) // 400 status code
+                if (hrm.StatusCode == System.Net.HttpStatusCode.BadRequest) 
                 {
                     var errorContent = await hrm.Content.ReadAsStringAsync();
                     Console.WriteLine($"Error 400: {errorContent}");
@@ -58,6 +60,9 @@ namespace ShiftSchedulerWebApp.ServiceLayer
             HttpResponseMessage? hrm = null;
             if (UseUrl != null)
             {
+                postJson.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                Debug.WriteLine(await postJson.ReadAsStringAsync());
+
                 hrm = await HttpEnabler.PutAsync(UseUrl, postJson);
             }
             return hrm;

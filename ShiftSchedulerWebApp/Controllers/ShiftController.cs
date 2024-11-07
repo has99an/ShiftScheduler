@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ShiftSchedulerWebApp.BusinessLayer;
 using ShiftSchedulerWebApp.Models;
+using ShiftSchedulerWebApp.ViewModels;
 
 namespace ShiftSchedulerWebApp.Controllers
 {
@@ -19,8 +20,11 @@ namespace ShiftSchedulerWebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var shifts = await _shiftService.GetShifts();
+
             return View(shifts);
         }
+
+
 
         public async Task<IActionResult> Details(int id)
         {
@@ -61,13 +65,16 @@ namespace ShiftSchedulerWebApp.Controllers
             var shift = await _shiftService.GetShiftById(id);
             if (shift == null) return NotFound();
 
-            // Sikre, at ViewBag.ShiftTypes og ViewBag.Employees er sat
-            ViewBag.ShiftTypes = new SelectList(Enum.GetValues(typeof(ShiftType)).Cast<ShiftType>());
             var employees = await _employeeService.GetEmployees();
-            if (employees == null) return NotFound(); // Fejlsikring
+            if (employees == null) return NotFound();
 
-            ViewBag.Employees = new SelectList(employees, "EmployeeID", "FirstName");
-            ViewBag.StatusList = new SelectList(Enum.GetValues(typeof(ShiftStatus)));
+            var employeeSelectList = employees.Select(e => new
+            {
+                EmployeeID = e.EmployeeID,
+                FullName = $"{e.FirstName} {e.LastName}"
+            });
+
+            ViewBag.Employees = new SelectList(employeeSelectList, "EmployeeID", "FullName", shift.EmployeeID);
 
             return View(shift);
         }
@@ -82,8 +89,11 @@ namespace ShiftSchedulerWebApp.Controllers
                 await _shiftService.UpdateShift(shift);
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.Employees = new SelectList(await _employeeService.GetEmployees(), "EmployeeID", "FirstName");
             return View(shift);
         }
+
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)

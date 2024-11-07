@@ -25,11 +25,7 @@ namespace ShiftSchedulerAPI.DataAccess
 
             try
             {
-                string queryString = @"
-                                        SELECT s.*, 
-                                               e.FirstName + ' ' + e.LastName AS EmployeeFullName 
-                                        FROM Shifts s
-                                        LEFT JOIN Employees e ON s.EmployeeID = e.EmployeeID";
+                string queryString = @"Select * from Shifts";
 
 
                 using (SqlConnection con = new SqlConnection(_connectionString))
@@ -54,30 +50,64 @@ namespace ShiftSchedulerAPI.DataAccess
             return foundShifts;
         }
 
-        public string GetEmployeeFullNameById(int employeeId)
+        public List<Shift> GetFixedShifts()
         {
-            string fullName = null;
+            List<Shift> fixedShifts = new List<Shift>();
 
             try
             {
-                string query = "SELECT FirstName + ' ' + LastName FROM Employees WHERE EmployeeID = @EmployeeId";
-                using (SqlConnection con = new SqlConnection(_connectionString))
-                using (SqlCommand command = new SqlCommand(query, con))
-                {
-                    command.Parameters.AddWithValue("@EmployeeId", employeeId);
+                string queryString = "SELECT * FROM Shifts WHERE EmployeeID IS NOT NULL";
 
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (SqlCommand command = new SqlCommand(queryString, con))
+                {
                     con.Open();
-                    var result = command.ExecuteScalar();
-                    fullName = result as string;
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Shift shift = GetShiftFromReader(reader);
+                        fixedShifts.Add(shift);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error retrieving employee full name: {ex.Message}");
+                Console.WriteLine($"Error retrieving fixed shifts: {ex.Message}");
                 throw;
             }
 
-            return fullName;
+            return fixedShifts;
+        }
+
+        public List<Shift> GetOpenShifts()
+        {
+            List<Shift> openShifts = new List<Shift>();
+
+            try
+            {
+                string queryString = "SELECT * FROM Shifts WHERE EmployeeID IS NULL";
+
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (SqlCommand command = new SqlCommand(queryString, con))
+                {
+                    con.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Shift shift = GetShiftFromReader(reader);
+                        openShifts.Add(shift);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving open shifts: {ex.Message}");
+                throw;
+            }
+
+            return openShifts;
         }
 
 

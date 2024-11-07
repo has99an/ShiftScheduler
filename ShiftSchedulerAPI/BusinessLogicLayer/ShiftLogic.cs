@@ -11,10 +11,12 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
     public class ShiftLogic : IShiftLogic
     {
         private readonly IShiftAccess _shiftAccess;
+        private readonly IEmployeeLogic _employeeLogic;
 
-        public ShiftLogic(IShiftAccess shiftAccess)
+        public ShiftLogic(IShiftAccess shiftAccess, IEmployeeLogic employeeLogic)
         {
             _shiftAccess = shiftAccess;
+            _employeeLogic = employeeLogic;
         }
 
         public async Task<List<ShiftDTO>> GetAllShifts()
@@ -27,7 +29,7 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
                 foreach (var shift in shifts)
                 {
                     string employeeFullName = shift.EmployeeID.HasValue
-                        ? await Task.Run(() => _shiftAccess.GetEmployeeFullNameById(shift.EmployeeID.Value))
+                        ? await _employeeLogic.GetEmployeeFullNameById(shift.EmployeeID.Value)
                         : "Open";
 
                     shiftDtos.Add(ShiftConverter.ToDTO(shift, employeeFullName));
@@ -42,6 +44,52 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
             }
         }
 
+        public async Task<List<ShiftDTO>> GetFixedShifts()
+        {
+            try
+            {
+                List<Shift> shifts = await Task.Run(() => _shiftAccess.GetFixedShifts());
+                var shiftDtos = new List<ShiftDTO>();
+
+                foreach (var shift in shifts)
+                {
+                    string employeeFullName = shift.EmployeeID.HasValue
+                        ? await _employeeLogic.GetEmployeeFullNameById(shift.EmployeeID.Value)
+                        : "Open";
+
+                    shiftDtos.Add(ShiftConverter.ToDTO(shift, employeeFullName));
+                }
+
+                return shiftDtos;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting fixed shifts: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<List<ShiftDTO>> GetOpenShifts()
+        {
+            try
+            {
+                List<Shift> shifts = await Task.Run(() => _shiftAccess.GetOpenShifts());
+                var shiftDtos = new List<ShiftDTO>();
+
+                foreach (var shift in shifts)
+                {
+                    shiftDtos.Add(ShiftConverter.ToDTO(shift, "Open"));
+                }
+
+                return shiftDtos;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting open shifts: {ex.Message}");
+                throw;
+            }
+        }
+
         public async Task<List<ShiftDTO>> GetShiftsByEmployeeId(int employeeId)
         {
             try
@@ -52,7 +100,7 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
                 foreach (var shift in shifts)
                 {
                     string employeeFullName = shift.EmployeeID.HasValue
-                        ? await Task.Run(() => _shiftAccess.GetEmployeeFullNameById(shift.EmployeeID.Value))
+                        ? await _employeeLogic.GetEmployeeFullNameById(shift.EmployeeID.Value)
                         : "Open";
 
                     shiftDtos.Add(ShiftConverter.ToDTO(shift, employeeFullName));
@@ -73,7 +121,7 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
             {
                 Shift shift = await Task.Run(() => _shiftAccess.GetShiftById(shiftId));
                 string employeeFullName = shift.EmployeeID.HasValue
-                    ? await Task.Run(() => _shiftAccess.GetEmployeeFullNameById(shift.EmployeeID.Value))
+                    ? await _employeeLogic.GetEmployeeFullNameById(shift.EmployeeID.Value)
                     : "Open";
 
                 return ShiftConverter.ToDTO(shift, employeeFullName);

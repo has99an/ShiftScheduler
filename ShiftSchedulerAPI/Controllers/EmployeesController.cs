@@ -60,5 +60,18 @@ namespace ShiftSchedulerAPI.Controllers
             await _employeeLogic.RemoveEmployee(id);
             return NoContent();
         }
+
+        [HttpGet("{id}/fullname")]
+        public async Task<IActionResult> GetEmployeeFullName(int id)
+        {
+            var employee = await _employeeLogic.GetEmployeeById(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            var fullName = $"{employee.FirstName} {employee.LastName}";
+            return Ok(fullName);
+        }
+
     }
 }

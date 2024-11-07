@@ -9,5 +9,6 @@ namespace ShiftSchedulerAPI.DataAccess
         int AddEmployee(Employee employee);
         void UpdateEmployee(Employee employee);
         void DeleteEmployee(int employeeId);
+        string GetEmployeeFullNameById(int employeeId);
     }
 }

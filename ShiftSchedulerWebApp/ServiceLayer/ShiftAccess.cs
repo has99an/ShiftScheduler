@@ -78,5 +78,22 @@ namespace ShiftSchedulerWebApp.ServiceLayer
             HttpResponseMessage? response = await _shiftService.CallServiceDelete();
             return response != null && response.IsSuccessStatusCode;
         }
+
+        public async Task<string?> GetEmployeeFullNameByEmployeeId(int employeeId)
+        {
+            string? employeeFullName = null;
+
+            HttpResponseMessage? response = await _shiftService.CallServiceGet($"employees/{employeeId}/fullname");
+
+            if (response != null && response.IsSuccessStatusCode)
+            {
+                string jsonString = await response.Content.ReadAsStringAsync();
+                employeeFullName = JsonConvert.DeserializeObject<string>(jsonString); 
+            }
+
+            return employeeFullName;
+        }
+
+
     }
 }

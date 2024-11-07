@@ -11,5 +11,6 @@ namespace ShiftSchedulerAPI.BusinessLogicLayer
         Task<int> AddEmployee(EmployeeDTO employee);
         Task UpdateEmployee(EmployeeDTO employee);
         Task RemoveEmployee(int employeeId);
+        Task<string> GetEmployeeFullNameById(int employeeId);
     }
 }

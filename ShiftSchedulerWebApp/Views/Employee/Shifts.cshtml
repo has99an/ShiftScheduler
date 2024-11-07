@@ -13,8 +13,7 @@
             <th>Start Time</th>
             <th>End Time</th>
             <th>Date</th>
-            <th>Type</th>
-            <th>Status</th>
+            <th>Employee</th> 
             <th></th>
         </tr>
     </thead>
@@ -23,11 +22,10 @@
         {
             <tr>
                 <td>@shift.ShiftID</td>
+                <td>@shift.EmployeeID</td>
                 <td>@shift.StartTime</td>
                 <td>@shift.EndTime</td>
                 <td>@shift.Date.ToShortDateString()</td>
-                <td>@shift.Type</td>
-                <td>@shift.Status</td>
                 <td>
                     <a asp-controller="Shift" asp-action="Edit" asp-route-id="@shift.ShiftID">Edit</a>
                     <a href="#" onclick="confirmDelete(@shift.ShiftID)">Delete</a>
@@ -43,15 +41,15 @@
             fetch(`/Shift/Delete/${shiftId}`, {
                 method: 'DELETE'
             })
-            .then(response => {
-                if (response.ok) {
-                    alert("Skiftet er slettet.");
-                    location.reload();
-                } else {
-                    alert("Fejl ved sletning af skiftet.");
-                }
-            })
-            .catch(error => alert("Der opstod en fejl: " + error));
+                .then(response => {
+                    if (response.ok) {
+                        alert("Skiftet er slettet.");
+                        location.reload();
+                    } else {
+                        alert("Fejl ved sletning af skiftet.");
+                    }
+                })
+                .catch(error => alert("Der opstod en fejl: " + error));
         }
     }
 </script>

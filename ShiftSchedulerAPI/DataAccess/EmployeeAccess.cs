@@ -170,6 +170,45 @@ namespace ShiftSchedulerAPI.DataAccess
             }
         }
 
+        public string GetEmployeeFullNameById(int employeeId)
+        {
+            string fullName = "Unknown";
+
+            try
+            {
+                string queryString = "SELECT FirstName, LastName FROM Employees WHERE EmployeeID = @EmployeeId";
+                Console.WriteLine($"Fetching name for EmployeeID: {employeeId}");
+
+                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (SqlCommand command = new SqlCommand(queryString, con))
+                {
+                    command.Parameters.AddWithValue("@EmployeeId", employeeId);
+                    con.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            string firstName = reader.GetString(reader.GetOrdinal("FirstName"));
+                            string lastName = reader.GetString(reader.GetOrdinal("LastName"));
+                            fullName = $"{firstName} {lastName}";
+                        }
+                        else
+                        {
+                            Console.WriteLine($"No employee found with ID {employeeId}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving full name by ID: {ex.Message}");
+            }
+
+            return fullName;
+        }
+
+
         private Employee GetEmployeeFromReader(SqlDataReader employeeReader)
         {
             int employeeId = employeeReader.GetInt32(employeeReader.GetOrdinal("employeeID"));
@@ -182,7 +221,7 @@ namespace ShiftSchedulerAPI.DataAccess
             string mail = employeeReader.GetString(employeeReader.GetOrdinal("mail"));
             string phoneNumber = employeeReader.GetString(employeeReader.GetOrdinal("phoneNumber"));
 
-            // Use TryParse for safe conversion
+
             if (!Enum.TryParse(employeeReader.GetString(employeeReader.GetOrdinal("employeeType")), out EmployeeType employeeType))
             {
                 throw new InvalidOperationException("Invalid employee type value");

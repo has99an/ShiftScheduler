@@ -7,7 +7,8 @@ namespace ShiftSchedulerAPI.DataAccess
     {
         Shift GetShiftById(int id);
         List<Shift> GetAllShifts();
-        string GetEmployeeFullNameById(int employeeId);
+        List<Shift> GetFixedShifts();
+        List<Shift> GetOpenShifts();
         List<Shift> GetShiftsByEmployeeId(int employeeId);
         int AddShift(Shift shift);
         void UpdateShift(Shift shift);

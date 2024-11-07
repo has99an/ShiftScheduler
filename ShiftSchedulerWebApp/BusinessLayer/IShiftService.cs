@@ -12,5 +12,6 @@ namespace ShiftSchedulerWebApp.BusinessLayer
         Task<bool> CreateShift(Shift shift);
         Task<bool> UpdateShift(Shift shift);
         Task<bool> DeleteShift(int shiftId);
+        Task<string> GetEmployeeFullNameByEmployeeId(int employeeId);
     }
 }
