@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<ShiftSchedulerWebApp.Models.Shift>
 
-<h2>Shifts for Employee</h2>
+<h2>Shifts for @Model.FirstOrDefault()?.EmployeeFullName</h2>
 
 <p>
-    <a asp-action="Create" asp-route-employeeId="@Model.First().EmployeeID">Create New Shift</a>
+    <a asp-action="Create" asp-route-employeeId="@(Model.Any() ? Model.First().EmployeeID : 0)">Create New Shift</a>
 </p>
 
 <table class="table">
