@@ -33,7 +33,7 @@ namespace ShiftSchedulerWebApp.Controllers
                 start = shift.Date.ToString("yyyy-MM-dd") + "T" + shift.StartTime.ToString(@"hh\:mm"),
                 end = shift.Date.ToString("yyyy-MM-dd") + "T" + shift.EndTime.ToString(@"hh\:mm"),
                 type = shift.EmployeeID.HasValue ? "Fixed" : "Open",
-                shiftID = shift.ShiftID // Ensure the ShiftID is included
+                shiftID = shift.ShiftID 
             });
 
             return Json(events);

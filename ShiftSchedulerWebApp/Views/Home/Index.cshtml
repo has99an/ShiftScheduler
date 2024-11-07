@@ -49,8 +49,6 @@
                 document.getElementById('shiftStart').textContent = event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 document.getElementById('shiftEnd').textContent = event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 document.getElementById('shiftEmployee').textContent = event.extendedProps.type === 'Fixed' ? event.extendedProps.employeeFullName : 'None';
-
-                // Ensure correct shift ID is included in the Edit button link
                 document.getElementById('editShiftBtn').href = '/Shift/Edit/' + event.extendedProps.shiftID;
 
                 $(modal).modal('show');

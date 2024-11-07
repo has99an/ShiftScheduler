@@ -10,7 +10,7 @@ namespace ShiftSchedulerWebApp.ServiceLayer
     public class ShiftAccess : IShiftAccess
     {
         private readonly IServiceConnection _shiftService;
-        private readonly string _serviceBaseUrl = "http://localhost:5189/api/Shifts";
+        private readonly string _serviceBaseUrl = "http://localhost:5189/api/Shifts/";
 
         public ShiftAccess()
         {
@@ -68,7 +68,7 @@ namespace ShiftSchedulerWebApp.ServiceLayer
         public async Task<bool> UpdateShift(Shift shift)
         {
             var putJson = new StringContent(JsonConvert.SerializeObject(shift), Encoding.UTF8, "application/json");
-            _shiftService.UseUrl = $"{_serviceBaseUrl}/{shift.ShiftID}";
+            _shiftService.UseUrl = $"{_serviceBaseUrl}{shift.ShiftID}";
             HttpResponseMessage? response = await _shiftService.CallServicePut(putJson);
             return response != null && response.IsSuccessStatusCode;
         }

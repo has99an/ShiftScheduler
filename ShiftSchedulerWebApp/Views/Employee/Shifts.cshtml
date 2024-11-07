@@ -27,7 +27,7 @@
                 <td>@shift.EndTime</td>
                 <td>@shift.Date.ToShortDateString()</td>
                 <td>
-                    <a asp-controller="Shift" asp-action="Edit" asp-route-id="@shift.ShiftID">Edit</a>
+                    <a asp-controller="Shift" asp-action="Edit" asp-route-id="@shift.ShiftID">Edit</a> |
                     <a href="#" onclick="confirmDelete(@shift.ShiftID)">Delete</a>
                 </td>
             </tr>
