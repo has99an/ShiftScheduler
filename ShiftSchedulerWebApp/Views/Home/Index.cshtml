@@ -7,6 +7,32 @@
 
 <div id="calendar"></div>
 
+<!-- Modal for Shift Details -->
+<div id="shiftModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="shiftModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shiftModalLabel">Shift Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5 id="shiftTitle">Open</h5>
+                <hr>
+                <p><strong>Date:</strong> <span id="shiftDate"></span></p>
+                <p><strong>Start:</strong> <span id="shiftStart"></span></p>
+                <p><strong>End:</strong> <span id="shiftEnd"></span></p>
+                <p><strong>Employee:</strong> <span id="shiftEmployee">None</span></p>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="editShiftBtn" class="btn btn-primary">Edit</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var calendarEl = document.getElementById('calendar');
@@ -15,17 +41,45 @@
             events: '/Shift/GetShiftsForCalendar',
             slotMinTime: "10:00:00",
             slotMaxTime: "23:00:00",
-            eventDidMount: function (info) {
-                if (info.event.extendedProps.type === 'Fixed') {
-                    info.el.style.backgroundColor = 'green';
-                } else {
-                    info.el.style.backgroundColor = 'red';
-                }
+            eventClick: function (info) {
+                var event = info.event;
+                var modal = document.getElementById('shiftModal');
+                document.getElementById('shiftTitle').textContent = event.extendedProps.type === 'Fixed' ? event.extendedProps.employeeFullName : 'Open';
+                document.getElementById('shiftDate').textContent = event.start.toLocaleDateString();
+                document.getElementById('shiftStart').textContent = event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('shiftEnd').textContent = event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('shiftEmployee').textContent = event.extendedProps.type === 'Fixed' ? event.extendedProps.employeeFullName : 'None';
+
+                // Ensure correct shift ID is included in the Edit button link
+                document.getElementById('editShiftBtn').href = '/Shift/Edit/' + event.extendedProps.shiftID;
+
+                $(modal).modal('show');
             }
         });
         calendar.render();
     });
+
 </script>
+
+
+<style>
+    #calendar {
+        max-width: 90%;
+        height: 80vh;
+        margin: 0 auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+</style>
+
+<!-- Include jQuery and Bootstrap JS for modal support -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
 
 <style>
     #calendar {
