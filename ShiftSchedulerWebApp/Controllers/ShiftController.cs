@@ -24,6 +24,20 @@ namespace ShiftSchedulerWebApp.Controllers
             return View(shifts);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetShiftsForCalendar()
+        {
+            var shifts = await _shiftService.GetShifts();
+            var events = shifts.Select(shift => new
+            {
+                title = $"{shift.EmployeeFullName} - {shift.StartTime:hh\\:mm} to {shift.EndTime:hh\\:mm}",
+                start = shift.Date.ToString("yyyy-MM-dd") + "T" + shift.StartTime.ToString(@"hh\:mm"),
+                end = shift.Date.ToString("yyyy-MM-dd") + "T" + shift.EndTime.ToString(@"hh\:mm"),
+                type = shift.EmployeeID.HasValue ? "Fixed" : "Open" 
+            });
+
+            return Json(events);
+        }
 
 
         public async Task<IActionResult> Details(int id)
